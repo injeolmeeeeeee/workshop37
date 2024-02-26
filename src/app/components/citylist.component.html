@@ -1,0 +1,25 @@
+<h2>List of Cities</h2>
+<form [formGroup]="cityForm" (ngSubmit)="addCity()">
+  <label for="newCity">Add New City:</label>
+  <input type="text" id="newCity" formControlName="newCity">
+  <button type="submit">Add</button>
+  <div *ngIf="errorMessage">{{ errorMessage }}</div>
+</form>
+<hr>
+<table>
+  <thead>
+    <tr>
+      <th>City</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let city of cities">
+      <td>{{ city }}</td>
+      <td>
+        <button (click)="removeCity(city)">Remove</button>
+        <button (click)="navigateToWeather(city)">View Weather</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
