@@ -1,55 +1,37 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Component, OnInit, inject } from '@angular/core';
+import { Observable, map, tap } from 'rxjs';
+import { city } from '../models';
+import { CityStore } from '../citylist.store';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-citylist',
   templateUrl: './citylist.component.html',
-  styleUrls: ['./citylist.component.css']
+  styleUrl: './citylist.component.css'
 })
-export class CityListComponent implements OnInit {
-  cities: string[] = [];
-  cityForm: FormGroup;
-  errorMessage: string = '';
+export class CitylistComponent implements OnInit {
 
-  constructor(private formBuilder: FormBuilder, private router : Router) {
-    this.cityForm = this.formBuilder.group({
-      newCity: ['']
-    });
-  }
+  cityStore = inject(CityStore);
+  entries$!: Observable<city[]>;
+
+  constructor(private router : Router) {}
 
   ngOnInit(): void {
-    const savedCities = localStorage.getItem('cities');
-    if (savedCities) {
-      this.cities = JSON.parse(savedCities);
-    }
+    this.entries$ = this.cityStore.onEntries.asObservable()
+        .pipe(
+        tap(data => console.log('Received data:', data)),
+         map(e => e.map(v => ({ name: v.name})))
+        );
   }
 
-  addCity(): void {
-    if (this.cityForm.valid) {
-      const newCity = this.cityForm.value.newCity.trim();
-      if (!this.cities.includes(newCity)) {
-        this.cities.push(newCity);
-        localStorage.setItem('cities', JSON.stringify(this.cities));
-        this.cityForm.reset();
-        this.errorMessage = '';
-      } else {
-        this.errorMessage = 'City already exists!';
-      }
-    } else {
-      this.errorMessage = 'Please enter a city name!';
-    }
-  }
+  remove(city: string): void {
+    console.log('Remove button clicked for city:', city);
+    this.cityStore.removeCity(city);
+  }  
 
-  removeCity(city: string): void {
-    const index = this.cities.indexOf(city);
-    if (index !== -1) {
-      this.cities.splice(index, 1);
-      localStorage.setItem('cities', JSON.stringify(this.cities));
-    }
-  }
-  
   navigateToWeather(city: string): void {
+    console.log('View Weather button clicked for city:', city);
     this.router.navigate(['weather', city]);
   }
+
 }

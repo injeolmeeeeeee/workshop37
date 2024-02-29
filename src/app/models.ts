@@ -5,6 +5,6 @@ export interface weather {
     temp : string
 }
 
-export interface search {
-    country : string
+export interface city {
+    name: string
 }

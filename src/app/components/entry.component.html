@@ -1,0 +1,15 @@
+<form [formGroup]="form" (submit)="add()">
+    <table>
+      <tr>
+        <td>Add a City:</td>
+        <td>
+          <input type="text" formControlName="name">
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <button type="submit">Add</button>
+        </td>
+      </tr>
+    </table>
+  </form>
